@@ -9,6 +9,12 @@ download_url=$latest_version_url/$package_name
 temp_directory="/tmp"
 source_directory="/opt"
 
+# Check if the user is the root user
+if [ ! "$UID" -eq 0 ]; then
+    echo "permission denied" >&2
+    exit 1
+fi
+
 # Check if unzip installed
 
 if ! command -v "$unzip_package" > /dev/null 2>&1; then
