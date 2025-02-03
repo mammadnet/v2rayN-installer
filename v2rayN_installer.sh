@@ -67,6 +67,12 @@ if [ ! $? -eq 0 ]; then
 fi
 
 
+ln -f -s $source_directory/$name/$name /bin/
+if [ ! $? -eq 0 ]; then
+    error "something went wrong!!!"
+    exit 1
+fi
+
 
 
 
