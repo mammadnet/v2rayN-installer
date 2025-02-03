@@ -31,13 +31,19 @@ if [ ! -e "$temp_directory/$package_name" ]; then
     exit 1
 fi
 
-unzip -d $source_directory $temp_directory/$package_name
+unzip -o -d $source_directory $temp_directory/$package_name
 if [ ! $? -eq 0 ]; then
     echo "Extracting $package_name to $downoad_url failed" 
     exit 1
 fi
 
-mv $source_directory/$expackage_name $source_directory/$name
+# Check if the v2rayN file already exists in /opt
+# If it exists, remove it
+if [ -e "$source_directory/$name" ]; then
+    rm -rf "$source_directory/$name"
+fi
+
+mv -f $source_directory/$expackage_name $source_directory/$name
 if [ ! $? -eq 0 ]; then
     echo "something went wrong!!!"
     exit 1
@@ -50,4 +56,3 @@ fi
 
 
 
-    
