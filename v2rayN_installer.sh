@@ -1,5 +1,12 @@
 #!/bin/bash
 
+
+# Colors
+RED="\e[31m"
+GRN="\e[32m"
+BLU="\e[34m"
+RST="\e[0m"
+#----------------
 unzip_package='unzip'
 expackage_name="v2rayN-linux-64"
 package_name="$expackage_name.zip"
