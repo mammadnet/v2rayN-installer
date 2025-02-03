@@ -44,23 +44,31 @@ if ! command -v "$unzip_package" > /dev/null 2>&1; then
 fi
 
 
-notice "download $download_url"
+notice "Download $download_url"
+notice "Save downloaded file to $temp_directory"
 wget -q --show-progress --progress=bar:force -O /tmp/$package_name $download_url 2>&1
 if [ ! $? -eq 0 ]; then
     error "download from $downoad_url failed " 
     exit 1
 fi
 
+success "Download completed"
+
 if [ ! -e "$temp_directory/$package_name" ]; then
     error "$package_name not exist"
     exit 1
 fi
+
+notice "Unzip $temp_directory/$package_name"
+notice "and save to $source_directory"
 
 unzip -o -d $source_directory $temp_directory/$package_name
 if [ ! $? -eq 0 ]; then
     error "Extracting $package_name to $downoad_url failed" 
     exit 1
 fi
+
+success "unzip completed"
 
 # Check if the v2rayN file already exists in /opt
 # If it exists, remove it
@@ -70,14 +78,14 @@ fi
 
 mv -f $source_directory/$expackage_name $source_directory/$name
 if [ ! $? -eq 0 ]; then
-    error "something went wrong!!!"
+    error "Rename $source_directory/$expackage_name to $source_directory/$name failed"
     exit 1
 fi
 
 
-ln -f -s $source_directory/$name/$name /bin/
+ln -f -s $source_directory/$name/$name /bin/ > /dev/null 2>&1
 if [ ! $? -eq 0 ]; then
-    error "something went wrong!!!"
+    error "/bin/$name from $source_directory/$name/$name failed"
     exit 1
 fi
 
@@ -88,15 +96,18 @@ desktop_Entry="[Desktop Entry]\nType=Application\nTerminal=false\nIcon=$source_d
 if [ ! -e $desktop_items ]; then
     error "$name was installed but Icon was not added to desktop items"
     error "$desktop_items not exist"
-    echo "You can run the $name by v2rayN command"
+    notice "You can run the $name by v2rayN command"
     exit 1
 fi
 
 echo -e $desktop_Entry > $desktop_items/$name.desktop
 if [ ! $? -eq 0 ]; then
-    error "something went wrong!!!"
+    error "$name was installed but Icon was not added to desktop items"
+    notice "You can run the $name by v2rayN command"
     exit 1
 fi
+
+success "v2rayN installation completed successfully"
 
 exit 0
 
