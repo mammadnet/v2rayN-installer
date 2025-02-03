@@ -73,8 +73,24 @@ if [ ! $? -eq 0 ]; then
     exit 1
 fi
 
+desktop_items="/usr/share/applications"
 
+desktop_Entry="[Desktop Entry]\nType=Application\nTerminal=false\nIcon=$source_directory/$name/$name.png\nName=v2rayN\nExec=/bin/$name\nCategories=Utility;\n"
 
+if [ ! -e $desktop_items ]; then
+    error "$name was installed but Icon was not added to desktop items"
+    error "$desktop_items not exist"
+    echo "You can run the $name by v2rayN command"
+    exit 1
+fi
+
+echo -e $desktop_Entry > $desktop_items/$name.desktop
+if [ ! $? -eq 0 ]; then
+    error "something went wrong!!!"
+    exit 1
+fi
+
+exit 0
 
 
 
