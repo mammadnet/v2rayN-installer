@@ -17,7 +17,15 @@ temp_directory="/tmp"
 source_directory="/opt"
 
 error(){
-    echo -e "$RED ERR: $1 $RST" >&2
+    echo -e "$RED\0ERR: $1\0$RST" >&2
+}
+
+notice(){
+    echo -e "$BLU\0$1\0$RST"
+}
+
+success(){
+    echo -e "$GRN\0$1\0$RST"
 }
 
 # Check if the user is the root user
@@ -30,13 +38,13 @@ fi
 
 if ! command -v "$unzip_package" > /dev/null 2>&1; then
     error "$unzip_package not installed"
-    echo "install the $unzip_package package with this command:"
-    echo "apt install $unzip_package"
+    notice "install the $unzip_package package with this command:"
+    notice "apt install $unzip_package"
     exit 1
 fi
 
 
-echo "download $download_url"
+notice "download $download_url"
 wget -q --show-progress --progress=bar:force -O /tmp/$package_name $download_url 2>&1
 if [ ! $? -eq 0 ]; then
     error "download from $downoad_url failed " 
