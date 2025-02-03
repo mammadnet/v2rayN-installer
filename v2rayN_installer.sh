@@ -37,7 +37,7 @@ fi
 
 
 echo "download $download_url"
-# wget -O /tmp/$name.zip $download_url
+wget -O /tmp/$package_name $download_url
 if [ ! $? -eq 0 ]; then
     error "download from $downoad_url failed " 
     exit 1
