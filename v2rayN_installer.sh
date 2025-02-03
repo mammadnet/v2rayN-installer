@@ -37,7 +37,7 @@ fi
 
 
 echo "download $download_url"
-wget -O /tmp/$package_name $download_url
+wget -q --show-progress --progress=bar:force -O /tmp/$package_name $download_url 2>&1
 if [ ! $? -eq 0 ]; then
     error "download from $downoad_url failed " 
     exit 1
