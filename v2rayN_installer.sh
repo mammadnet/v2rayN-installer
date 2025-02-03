@@ -62,7 +62,7 @@ fi
 notice "Unzip $temp_directory/$package_name"
 notice "and save to $source_directory"
 
-unzip -o -d $source_directory $temp_directory/$package_name
+unzip -q -o -d $source_directory $temp_directory/$package_name
 if [ ! $? -eq 0 ]; then
     error "Extracting $package_name to $downoad_url failed" 
     exit 1
