@@ -16,16 +16,20 @@ download_url=$latest_version_url/$package_name
 temp_directory="/tmp"
 source_directory="/opt"
 
+error(){
+    echo -e "$RED ERR: $1 $RST" >&2
+}
+
 # Check if the user is the root user
 if [ ! "$UID" -eq 0 ]; then
-    echo "permission denied" >&2
+    error "permission denied"
     exit 1
 fi
 
 # Check if unzip installed
 
 if ! command -v "$unzip_package" > /dev/null 2>&1; then
-    echo "$unzip_package not installed"
+    error "$unzip_package not installed"
     echo "install the $unzip_package package with this command:"
     echo "apt install $unzip_package"
     exit 1
@@ -35,18 +39,18 @@ fi
 echo "download $download_url"
 # wget -O /tmp/$name.zip $download_url
 if [ ! $? -eq 0 ]; then
-    echo "download from $downoad_url failed " 
+    error "download from $downoad_url failed " 
     exit 1
 fi
 
 if [ ! -e "$temp_directory/$package_name" ]; then
-    echo "$package_name not exist"
+    error "$package_name not exist"
     exit 1
 fi
 
 unzip -o -d $source_directory $temp_directory/$package_name
 if [ ! $? -eq 0 ]; then
-    echo "Extracting $package_name to $downoad_url failed" 
+    error "Extracting $package_name to $downoad_url failed" 
     exit 1
 fi
 
@@ -58,7 +62,7 @@ fi
 
 mv -f $source_directory/$expackage_name $source_directory/$name
 if [ ! $? -eq 0 ]; then
-    echo "something went wrong!!!"
+    error "something went wrong!!!"
     exit 1
 fi
 
