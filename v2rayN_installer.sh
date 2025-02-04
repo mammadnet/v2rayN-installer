@@ -50,11 +50,15 @@ if [ -e "$temp_directory/$package_name" ]; then
     read prompt
     prompt=${prompt:-y}
 fi
-echo "-->$prompt"
 if [ $prompt == 'y' ]; then
+    if [ -e "$temp_directory/$package_name" ]; then
+        notice "Removing $temp_directory/$package_name"
+        rm $temp_directory/$package_name
+    fi
+
     notice "Download $download_url"
     notice "Save downloaded file to $temp_directory"
-    rm $temp_directory/$package_name 2>/dev/null
+
     wget -q --show-progress --progress=bar:force -O /tmp/$package_name $download_url 2>&1
     if [ ! $? -eq 0 ]; then
         error "download from $download_url failed " 
@@ -63,10 +67,6 @@ if [ $prompt == 'y' ]; then
 
     success "Download completed"
 
-    if [ ! -e "$temp_directory/$package_name" ]; then
-        error "$package_name not exist"
-        exit 1
-    fi
 
 fi
 
