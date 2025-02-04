@@ -46,8 +46,9 @@ fi
 prompt='y'
 if [ -e "$temp_directory/$package_name" ]; then
     notice "$package_name already exist in /tmp/"
-    notice "Do you want to download it again? [Y/n]"
-    read prompt
+    echo -n -e $BLU
+    read -p "Do you want to download it again? [Y/n] " prompt
+    echo -n -e $RST
     prompt=${prompt:-y}
 fi
 if [ $prompt == 'y' ]; then
@@ -56,7 +57,7 @@ if [ $prompt == 'y' ]; then
         rm $temp_directory/$package_name
     fi
 
-    notice "Download $download_url"
+    notice "Downloading $download_url"
     notice "Save downloaded file to $temp_directory"
 
     wget -q --show-progress --progress=bar:force -O /tmp/$package_name $download_url 2>&1
@@ -70,8 +71,8 @@ if [ $prompt == 'y' ]; then
 
 fi
 
-notice "Unzip $temp_directory/$package_name"
-notice "and save to $source_directory"
+notice "Extracting: $temp_directory/$package_name"
+notice "Save $expackage_name to $source_directory"
 
 unzip -q -o -d $source_directory $temp_directory/$package_name
 if [ ! $? -eq 0 ]; then
@@ -79,31 +80,33 @@ if [ ! $? -eq 0 ]; then
     exit 1
 fi
 
-success "unzip completed"
+success "Extracting completed"
 
 # Check if the v2rayN file already exists in /opt
 # If it exists, remove it
 if [ -e "$source_directory/$name" ]; then
+    notice "Removing: $source_directory/$name"
     rm -rf "$source_directory/$name"
 fi
 
+notice "Rename $source_directory/$expackage_name to $source_directory/$name"
 mv -f $source_directory/$expackage_name $source_directory/$name
 if [ ! $? -eq 0 ]; then
     error "Rename $source_directory/$expackage_name to $source_directory/$name failed"
     exit 1
 fi
 
-
+notice "Create a symbolic link /bin/$name from $source_directory/$name/$name "
 ln -f -s $source_directory/$name/$name /bin/ > /dev/null 2>&1
 if [ ! $? -eq 0 ]; then
-    error "/bin/$name from $source_directory/$name/$name failed"
+    error "Create a symbolic link /bin/$name from $source_directory/$name/$name failed"
     exit 1
 fi
 
 desktop_items="/usr/share/applications"
 
 desktop_Entry="[Desktop Entry]\nType=Application\nTerminal=false\nIcon=$source_directory/$name/$name.png\nName=v2rayN\nExec=/bin/$name\nCategories=Utility;\n"
-
+notice "Create desktop item"
 if [ ! -e $desktop_items ]; then
     error "$name was installed but Icon was not added to desktop items"
     error "$desktop_items not exist"
@@ -111,6 +114,7 @@ if [ ! -e $desktop_items ]; then
     exit 1
 fi
 
+notice "Desktop item: $name.desktop to $desktop_items"
 echo -e $desktop_Entry > $desktop_items/$name.desktop
 if [ ! $? -eq 0 ]; then
     error "$name was installed but Icon was not added to desktop items"
