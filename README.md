@@ -2,7 +2,7 @@
 
 A script for download and install latest release of v2rayN client from this [repo](https://github.com/2dust/v2rayN)
 
-ℹ️ This script has only been run and tested on on Ubuntu Desktop
+ℹ️ This script has only been run and tested on Ubuntu Desktop
 
 
 ## About
