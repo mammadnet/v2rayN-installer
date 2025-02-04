@@ -4,7 +4,8 @@
 # Colors
 RED="\e[31m"
 GRN="\e[32m"
-BLU="\e[34m"
+YLW="\e[33m"
+MGN="\e[35m"
 RST="\e[0m"
 #----------------
 unzip_package='unzip'
@@ -21,11 +22,15 @@ error(){
 }
 
 notice(){
-    echo -e "$BLU\0$1\0$RST"
+    echo -e "$YLW\0$1\0$RST"
 }
 
 success(){
     echo -e "$GRN\0$1\0$RST"
+}
+
+warining(){
+    echo -e "$MGN\0$1\0$RST"
 }
 
 # Check if the user is the root user
@@ -45,15 +50,15 @@ fi
 
 prompt='y'
 if [ -e "$temp_directory/$package_name" ]; then
-    notice "$package_name already exist in /tmp/"
-    echo -n -e $BLU
+    warining "$package_name already exist in /tmp/"
+    echo -n -e $YLW
     read -p "Do you want to download it again? [Y/n] " prompt
     echo -n -e $RST
     prompt=${prompt:-y}
 fi
 if [ $prompt == 'y' ]; then
     if [ -e "$temp_directory/$package_name" ]; then
-        notice "Removing $temp_directory/$package_name"
+        warining "Removing $temp_directory/$package_name"
         rm $temp_directory/$package_name
     fi
 
@@ -85,7 +90,7 @@ success "Extracting completed"
 # Check if the v2rayN file already exists in /opt
 # If it exists, remove it
 if [ -e "$source_directory/$name" ]; then
-    notice "Removing: $source_directory/$name"
+    warining "Removing: $source_directory/$name"
     rm -rf "$source_directory/$name"
 fi
 
@@ -115,6 +120,10 @@ if [ ! -e $desktop_items ]; then
 fi
 
 notice "Desktop item: $name.desktop to $desktop_items"
+if [ -e "$desktop_items/$name.desktop" ]; then
+    warining "Overwrite $desktop_items/$name.desktop"
+fi
+
 echo -e $desktop_Entry > $desktop_items/$name.desktop
 if [ ! $? -eq 0 ]; then
     error "$name was installed but Icon was not added to desktop items"
