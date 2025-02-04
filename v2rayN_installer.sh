@@ -43,20 +43,31 @@ if ! command -v "$unzip_package" > /dev/null 2>&1; then
     exit 1
 fi
 
-
-notice "Download $download_url"
-notice "Save downloaded file to $temp_directory"
-wget -q --show-progress --progress=bar:force -O /tmp/$package_name $download_url 2>&1
-if [ ! $? -eq 0 ]; then
-    error "download from $downoad_url failed " 
-    exit 1
+prompt='y'
+if [ -e "$temp_directory/$package_name" ]; then
+    notice "$package_name already exist in /tmp/"
+    notice "Do you want to download it again? [Y/n]"
+    read prompt
+    prompt=${prompt:-y}
 fi
+echo "-->$prompt"
+if [ $prompt == 'y' ]; then
+    notice "Download $download_url"
+    notice "Save downloaded file to $temp_directory"
+    rm $temp_directory/$package_name 2>/dev/null
+    wget -q --show-progress --progress=bar:force -O /tmp/$package_name $download_url 2>&1
+    if [ ! $? -eq 0 ]; then
+        error "download from $download_url failed " 
+        exit 1
+    fi
 
-success "Download completed"
+    success "Download completed"
 
-if [ ! -e "$temp_directory/$package_name" ]; then
-    error "$package_name not exist"
-    exit 1
+    if [ ! -e "$temp_directory/$package_name" ]; then
+        error "$package_name not exist"
+        exit 1
+    fi
+
 fi
 
 notice "Unzip $temp_directory/$package_name"
