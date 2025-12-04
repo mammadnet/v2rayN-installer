@@ -78,8 +78,8 @@ if [ $prompt == 'y' ]; then
 
 fi
 
-notice "Extracting: $temp_directory/$package_name"
-notice "Save $expackage_name to $source_directory"
+notice "Extracting archive: $temp_directory/$package_name"
+notice "Saving $expackage_name to $source_directory"
 
 unzip -q -o -d $source_directory $temp_directory/$package_name
 if [ ! $? -eq 0 ]; then
@@ -87,10 +87,10 @@ if [ ! $? -eq 0 ]; then
     exit 1
 fi
 
-success "Extracting completed"
+success "Extraction completed."
 
 # Change owner of the extracted file to nurmal user
-notice "Change ownership of extracted file, root -> $user"
+notice "Changing ownership of extracted files (root -> $user)"
 chown -R $user:$user $source_directory
 if [ ! $? -eq 0 ]; then
     error "Ownership change root to $user failed" 
@@ -100,18 +100,18 @@ fi
 # Check if the v2rayN file already exists in /opt
 # If it exists, remove it
 if [ -e "$source_directory/$name" ]; then
-    warining "Removing: $source_directory/$name"
+    warining "Removing old installation at: $source_directory/$name"
     rm -rf "$source_directory/$name"
 fi
 
-notice "Rename $source_directory/$expackage_name to $source_directory/$name"
+notice "Renaming $source_directory/$expackage_name -> $source_directory/$name"
 mv -f $source_directory/$expackage_name $source_directory/$name
 if [ ! $? -eq 0 ]; then
-    error "Rename $source_directory/$expackage_name to $source_directory/$name failed"
+    error "Renaming $source_directory/$expackage_name to $source_directory/$name failed"
     exit 1
 fi
 
-notice "Create a symbolic link /bin/$name from $source_directory/$name/$name "
+notice "Creating symbolic link: /bin/$name -> $source_directory/$name/$name "
 ln -f -s $source_directory/$name/$name /bin/ > /dev/null 2>&1
 if [ ! $? -eq 0 ]; then
     error "Create a symbolic link /bin/$name from $source_directory/$name/$name failed"
@@ -121,7 +121,7 @@ fi
 desktop_items="/usr/share/applications"
 
 desktop_Entry="[Desktop Entry]\nType=Application\nTerminal=false\nIcon=$source_directory/$name/$name.png\nName=v2rayN\nExec=/bin/$name\nCategories=Utility;\n"
-notice "Create desktop item"
+notice "Creating desktop entry..."
 if [ ! -e $desktop_items ]; then
     error "$name was installed but Icon was not added to desktop items"
     error "$desktop_items not exist"
@@ -129,9 +129,9 @@ if [ ! -e $desktop_items ]; then
     exit 1
 fi
 
-notice "Desktop item: $name.desktop to $desktop_items"
+notice "Copying $name.desktop to $desktop_items"
 if [ -e "$desktop_items/$name.desktop" ]; then
-    warining "Overwrite $desktop_items/$name.desktop"
+    warining "Overwriting existing: $desktop_items/$name.desktop"
 fi
 
 echo -e $desktop_Entry > $desktop_items/$name.desktop
