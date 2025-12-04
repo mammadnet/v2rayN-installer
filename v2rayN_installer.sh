@@ -37,6 +37,8 @@ warining(){
 if [ ! "$UID" -eq 0 ]; then
     error "permission denied"
     exit 1
+else 
+    user=$SUDO_USER
 fi
 
 # Check if unzip installed
@@ -86,6 +88,14 @@ if [ ! $? -eq 0 ]; then
 fi
 
 success "Extracting completed"
+
+# Change owner of the extracted file to nurmal user
+notice "Change ownership of extracted file, root -> $user"
+chown -R $user:$user $source_directory
+if [ ! $? -eq 0 ]; then
+    error "Ownership change root to $user failed" 
+    exit 1
+fi
 
 # Check if the v2rayN file already exists in /opt
 # If it exists, remove it
