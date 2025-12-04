@@ -91,7 +91,7 @@ success "Extraction completed."
 
 # Change owner of the extracted file to nurmal user
 notice "Changing ownership of extracted files (root -> $user)"
-chown -R $user:$user $source_directory
+chown -R $user:$user $source_directory/$package_name
 if [ ! $? -eq 0 ]; then
     error "Ownership change root to $user failed" 
     exit 1
