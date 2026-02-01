@@ -67,7 +67,7 @@ if [ $prompt == 'y' ]; then
     notice "Downloading $download_url"
     notice "Save downloaded file to $temp_directory"
 
-    wget -q --show-progress --progress=bar:force -O /tmp/$package_name $download_url 2>&1
+    wget --show-progress --progress=bar:force --timeout=30 -O /tmp/$package_name $download_url 2>&1
     if [ ! $? -eq 0 ]; then
         error "download from $download_url failed " 
         exit 1
@@ -83,7 +83,7 @@ notice "Saving $expackage_name to $source_directory"
 
 unzip -q -o -d $source_directory $temp_directory/$package_name
 if [ ! $? -eq 0 ]; then
-    error "Extracting $package_name to $downoad_url failed" 
+    error "Extracting $package_name to $source_directory failed" 
     exit 1
 fi
 
@@ -91,7 +91,7 @@ success "Extraction completed."
 
 # Change owner of the extracted file to nurmal user
 notice "Changing ownership of extracted files (root -> $user)"
-chown -R $user:$user $source_directory/$package_name
+chown -R $user:$user $source_directory/$expackage_name
 if [ ! $? -eq 0 ]; then
     error "Ownership change root to $user failed" 
     exit 1
