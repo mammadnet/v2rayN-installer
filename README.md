@@ -28,5 +28,5 @@ To install, run these commands:
 ```sh
 git clone https://github.com/mammadnet/v2rayN-installer.git
 
-sudo ./v2rayN-installer/v2rayN-installer.sh
+sudo ./v2rayN-installer/v2rayN_installer.sh
 ```
