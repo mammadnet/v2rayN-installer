@@ -7,15 +7,6 @@ GRN="\e[32m"
 YLW="\e[33m"
 MGN="\e[35m"
 RST="\e[0m"
-#----------------
-unzip_package='unzip'
-expackage_name="v2rayN-linux-64"
-package_name="$expackage_name.zip"
-name="v2rayN"
-latest_version_url="https://github.com/2dust/v2rayN/releases/latest/download"
-download_url=$latest_version_url/$package_name
-temp_directory="/tmp"
-source_directory="/opt"
 
 error(){
     echo -e "$RED\0ERR: $1\0$RST" >&2
@@ -33,10 +24,28 @@ warining(){
     echo -e "$MGN\0$1\0$RST"
 }
 
+#----------------
+unzip_package='unzip'
+expackage_name="v2rayN-linux-64"
+package_name="$expackage_name.zip"
+name="v2rayN"
+latest_version_url="https://github.com/2dust/v2rayN/releases/latest/download"
+download_url=$latest_version_url/$package_name
+temp_directory="/tmp"
+source_directory="/opt"
+bin_dir="/bin"
+user=$USER
+desktop_items="/usr/share/applications"
+
+
 # Check if the user is the root user
 if [ ! "$UID" -eq 0 ]; then
-    error "permission denied"
-    exit 1
+    notice "Running in user mode"
+    notice "Installing app in user invironment"
+    source_directory="$HOME/.local/share"
+    bin_dir="$HOME/.local/bin"
+    desktop_items="$HOME/.local/share/applications"
+
 else 
     user=$SUDO_USER
 fi
@@ -88,13 +97,14 @@ if [ ! $? -eq 0 ]; then
 fi
 
 success "Extraction completed."
-
-# Change owner of the extracted file to nurmal user
-notice "Changing ownership of extracted files (root -> $user)"
-chown -R $user:$user $source_directory/$expackage_name
-if [ ! $? -eq 0 ]; then
-    error "Ownership change root to $user failed" 
-    exit 1
+if [ "$UID" -eq 0 ]; then
+    # Change owner of the extracted file to nurmal user
+    notice "Changing ownership of extracted files (root -> $user)"
+    chown -R $user:$user $source_directory/$expackage_name
+    if [ ! $? -eq 0 ]; then
+        error "Ownership change root to $user failed" 
+        exit 1
+    fi
 fi
 
 # Check if the v2rayN file already exists in /opt
@@ -111,16 +121,19 @@ if [ ! $? -eq 0 ]; then
     exit 1
 fi
 
-notice "Creating symbolic link: /bin/$name -> $source_directory/$name/$name "
-ln -f -s $source_directory/$name/$name /bin/ > /dev/null 2>&1
+if [ ! -e $bin_dir ]; then
+    notice "Create $bin_dir directory..."
+    mkdir -p $bin_dir
+fi
+
+notice "Creating symbolic link: $bin_dir/$name -> $source_directory/$name/$name"
+ln -f -s $source_directory/$name/$name $bin_dir/ > /dev/null 2>&1
 if [ ! $? -eq 0 ]; then
-    error "Create a symbolic link /bin/$name from $source_directory/$name/$name failed"
+    error "Create a symbolic link $bin_dir/$name from $source_directory/$name/$name failed"
     exit 1
 fi
 
-desktop_items="/usr/share/applications"
-
-desktop_Entry="[Desktop Entry]\nType=Application\nTerminal=false\nIcon=$source_directory/$name/$name.png\nName=v2rayN\nExec=/bin/$name\nCategories=Utility;\n"
+desktop_Entry="[Desktop Entry]\nType=Application\nTerminal=false\nIcon=$source_directory/$name/$name.png\nName=v2rayN\nExec=$bin_dir/$name\nCategories=Utility;\n"
 notice "Creating desktop entry..."
 if [ ! -e $desktop_items ]; then
     error "$name was installed but Icon was not added to desktop items"
@@ -140,6 +153,9 @@ if [ ! $? -eq 0 ]; then
     notice "You can run the $name by v2rayN command"
     exit 1
 fi
+
+notice "Update desktop item file"
+update-desktop-database $desktop_items
 
 success "v2rayN installation completed successfully"
 
