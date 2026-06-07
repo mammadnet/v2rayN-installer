@@ -126,6 +126,13 @@ if [ ! -e $bin_dir ]; then
     mkdir -p $bin_dir
 fi
 
+notice "Add executable permission for $source_directory/$name/$name"
+chmod 754 $source_directory/$name/$name 2>&1
+if [ ! $? -eq 0 ]; then
+    error "Add executable permission for $source_directory/$name/$name failed"
+    exit 1
+fi
+
 notice "Creating symbolic link: $bin_dir/$name -> $source_directory/$name/$name"
 ln -f -s $source_directory/$name/$name $bin_dir/ > /dev/null 2>&1
 if [ ! $? -eq 0 ]; then
