@@ -61,7 +61,7 @@ fi
 
 prompt='y'
 if [ -e "$temp_directory/$package_name" ]; then
-    warining "$package_name already exist in /tmp/"
+    warining "$package_name already exist in $temp_directory "
     echo -n -e $YLW
     read -p "Do you want to download it again? [Y/n] " prompt
     echo -n -e $RST
@@ -76,7 +76,7 @@ if [ $prompt == 'y' ]; then
     notice "Downloading $download_url"
     notice "Save downloaded file to $temp_directory"
 
-    wget --show-progress --progress=bar:force --timeout=30 -O /tmp/$package_name $download_url 2>&1
+    wget --show-progress --progress=bar:force --timeout=30 -O $temp_directory/$package_name $download_url 2>&1
     if [ ! $? -eq 0 ]; then
         error "download from $download_url failed " 
         exit 1
