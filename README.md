@@ -4,6 +4,7 @@
 ## About
 
 - Download and install the latest v2rayN application on Ubuntu Desktop.
+- Set proxy for download and install v2rayN
 - Detects if run with `sudo` (install for all users) or without (install only for current user).
 - Adds v2rayN icon to the appropriate application menu (system-wide or user-specific).
 
@@ -21,6 +22,13 @@ To install, run the following commands:
 ```bash
 git clone https://github.com/mammadnet/v2rayN-installer.git
 cd v2rayN-installer
+```
+**For use proxy to installation:**
+```bash
+./v2rayN_installer.sh -s [HOST] -p [PORT]
+
+# Ex: ./v2rayN_installer.sh -s 192.168.1.20 -p 10808
+
 ```
 
 **For system-wide installation (all users):**
