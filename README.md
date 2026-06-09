@@ -4,7 +4,7 @@
 ## About
 
 - Download and install the latest v2rayN application on Ubuntu Desktop.
-- **Smart Installation**: Detects if run with `sudo` (install for all users) or without (install only for current user).
+- Detects if run with `sudo` (install for all users) or without (install only for current user).
 - Adds v2rayN icon to the appropriate application menu (system-wide or user-specific).
 
 ## Installation
