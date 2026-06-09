@@ -50,6 +50,42 @@ else
     user=$SUDO_USER
 fi
 
+# Pars options
+proxy_set=0
+proxy_host=""
+proxy_port=""
+
+while getopts "s:p:" opt; do
+    case $opt in 
+        s) 
+            proxy_host="$OPTARG"
+            proxy_set=1
+            ;;
+        p) 
+            proxy_port="$OPTARG"
+            ;;
+    esac
+done
+
+if [ $proxy_set -eq 1 ]; then
+    if [ -z "$proxy_port" ]; then
+        error "Missing proxy port"
+        exit 1
+    fi
+fi
+
+# Download main package with wget based on set proxy
+download(){
+    output_path="$2"
+    url="$1"
+    proxy_opt=""
+    if [ $proxy_set -eq 1 ]; then
+        proxy_opt="-e use_proxy=yes -e https_proxy=$proxy_host:$proxy_port"
+    fi
+
+    wget $proxy_opt --show-progress --progress=bar:force --timeout=30 -O $output_path $url 2>&1
+}
+
 # Check if unzip installed
 
 if ! command -v "$unzip_package" > /dev/null 2>&1; then
@@ -76,7 +112,7 @@ if [ $prompt == 'y' ]; then
     notice "Downloading $download_url"
     notice "Save downloaded file to $temp_directory"
 
-    wget --show-progress --progress=bar:force --timeout=30 -O $temp_directory/$compressed_app $download_url 2>&1
+    download $download_url $temp_directory/$compressed_app
     if [ ! $? -eq 0 ]; then
         error "download from $download_url failed " 
         exit 1
