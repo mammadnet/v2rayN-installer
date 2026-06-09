@@ -24,6 +24,55 @@ warining(){
     echo -e "$MGN\0$1\0$RST"
 }
 
+# Show help message
+show_help(){
+    echo
+    notice "**************v2rayN Installer****************"
+    success "Download and install latest version of v2rayN" 
+    notice "_____________________________________________"
+    echo "Run $0 to install latest version of v2rayN"
+    notice "_____________________________________________"
+    echo "To use proxy to download and install v2rayN: $0 -s [HOST] -p [PORT]"
+    echo "Ex: $0 -s 192.168.1.20 -p 10808"
+    echo "For Print this message use: -h"
+    echo
+    echo
+}
+
+# Pars options
+proxy_set=0
+proxy_host=""
+proxy_port=""
+
+while getopts "s:p:h" opt; do
+    case $opt in 
+        s) 
+            proxy_host="$OPTARG"
+            proxy_set=1
+            ;;
+        p) 
+            proxy_port="$OPTARG"
+            ;;
+        h)
+            show_help
+            exit 0
+            ;;
+        *)
+            error "Bad options"
+            show_help
+            exit 1
+            ;;
+    esac
+done
+
+if [ $proxy_set -eq 1 ]; then
+    if [ -z "$proxy_port" ]; then
+        error "Missing proxy port"
+        show_help
+        exit 1
+    fi
+fi
+
 #----------------
 unzip_package='unzip'
 app_name="v2rayN-linux-64"
@@ -48,30 +97,6 @@ if [ ! "$UID" -eq 0 ]; then
 
 else 
     user=$SUDO_USER
-fi
-
-# Pars options
-proxy_set=0
-proxy_host=""
-proxy_port=""
-
-while getopts "s:p:" opt; do
-    case $opt in 
-        s) 
-            proxy_host="$OPTARG"
-            proxy_set=1
-            ;;
-        p) 
-            proxy_port="$OPTARG"
-            ;;
-    esac
-done
-
-if [ $proxy_set -eq 1 ]; then
-    if [ -z "$proxy_port" ]; then
-        error "Missing proxy port"
-        exit 1
-    fi
 fi
 
 # Download main package with wget based on set proxy
